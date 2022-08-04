@@ -1,0 +1,1 @@
+/usr/bin/g++-7  -std=c++17 -pthread   CMakeFiles/SnakeGame.dir/main.cpp.o CMakeFiles/SnakeGame.dir/game.cpp.o CMakeFiles/SnakeGame.dir/controller.cpp.o CMakeFiles/SnakeGame.dir/renderer.cpp.o CMakeFiles/SnakeGame.dir/snake.cpp.o  -o SnakeGame -L/usr/lib/x86_64-linux-gnu  -lSDL2 
