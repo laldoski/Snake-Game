@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <random>
+#include <vector>
 #include "SDL.h"
 #include "controller.h"
 #include "renderer.h"
@@ -9,14 +10,15 @@
 
 class Game {
  public:
+ 
   Game(std::size_t grid_width, std::size_t grid_height);
   void Run(Controller const &controller, Renderer &renderer,
            std::size_t target_frame_duration);
   int GetScore() const;
   int GetSize() const;
 
- private:
   Snake snake;
+  Snake snake2;
   SDL_Point food;
 
   std::random_device dev;
@@ -25,7 +27,7 @@ class Game {
   std::uniform_int_distribution<int> random_h;
 
   int score{0};
-
+  int score2{0};
   void PlaceFood();
   void Update();
 };

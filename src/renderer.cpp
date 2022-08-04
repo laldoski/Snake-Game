@@ -38,7 +38,7 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(Snake const snake, SDL_Point const &food) {
+void Renderer::Render(Snake const snake,Snake const snake2, SDL_Point const &food) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -52,19 +52,29 @@ void Renderer::Render(Snake const snake, SDL_Point const &food) {
   block.x = food.x * block.w;
   block.y = food.y * block.h;
   SDL_RenderFillRect(sdl_renderer, &block);
-
+  
   // Render snake's body
-  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF); //snake1
   for (SDL_Point const &point : snake.body) {
     block.x = point.x * block.w;
     block.y = point.y * block.h;
     SDL_RenderFillRect(sdl_renderer, &block);
+    
   }
-
+ SDL_SetRenderDrawColor(sdl_renderer, 0xF1, 0xF1, 0xF1, 0xF1); //snake2
+  for (SDL_Point const &point2 : snake2.body) {
+    block.x = point2.x * block.w;
+    block.y = point2.y * block.h;
+    SDL_RenderFillRect(sdl_renderer, &block);
+  }
+ 
   // Render snake's head
   block.x = static_cast<int>(snake.head_x) * block.w;
   block.y = static_cast<int>(snake.head_y) * block.h;
-  if (snake.alive) {
+  block.x = static_cast<int>(snake2.head_x2) * block.w;
+  block.y = static_cast<int>(snake2.head_y2) * block.h;
+  
+  if (snake.alive || snake2.alive) {
     SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
   } else {
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
@@ -75,7 +85,8 @@ void Renderer::Render(Snake const snake, SDL_Point const &food) {
   SDL_RenderPresent(sdl_renderer);
 }
 
-void Renderer::UpdateWindowTitle(int score, int fps) {
-  std::string title{"Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
+void Renderer::UpdateWindowTitle(int score, int score2, int fps) {
+  std::string title{"Snake Score: " + std::to_string(score) +  " vs " + "Snake2 Score: " + std::to_string(score2) 
+  + " FPS: " + std::to_string(fps)};
   SDL_SetWindowTitle(sdl_window, title.c_str());
 }
