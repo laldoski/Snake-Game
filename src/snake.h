@@ -18,8 +18,8 @@ class Snake {
        
     }
     else if(snakePlayer == 2) {
-       head_x2 = (grid_width / 2);
-       head_y2 = (grid_height / 2);
+       head_x2 = (grid_width / 3);
+       head_y2 = (grid_height / 3);
        
     }
    }
