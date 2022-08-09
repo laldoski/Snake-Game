@@ -8,8 +8,7 @@
 using namespace std;
 
 Game::Game(std::size_t grid_width, std::size_t grid_height)
-      : snake(grid_width,grid_height),
-       snake2(grid_width,grid_height),
+      : snake(grid_width,grid_height,1), snake2(grid_width,grid_height,2),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)){
@@ -30,12 +29,10 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-   controller.HandleInput(running, snake);
+   controller.HandleInput(running, snake, snake2);
     Update();
    renderer.Render(snake, snake2, food);
-   //rednerer.Render(snake2, food);
-    //std:: thread t (renderer.Render, snake, food);// Lava
-  
+   
     frame_end = SDL_GetTicks();
 
     // Keep track of how long each loop through the input/update/render cycle
@@ -81,24 +78,19 @@ void Game::Update() {
   return;
   
 
-  snake.Update();
+  snake.Update(1);
   int new_x = static_cast<int>(snake.head_x);
   int new_y = static_cast<int>(snake.head_y);
   
   // Check if there's food over here
   if (food.x == new_x && food.y == new_y) {
     score++;
-    //std::ofstream filestream;
-    //filestream.open("/home/workspace/score.txt"); //lava
-    //filestream << "player -1- :  " << score;         //lava
-    //filestream.close();                           //lava
-    //PlaceFood();
     // Grow snake and increase speed.
     snake.GrowBody();
     snake.speed += 0.02;
   }
 
-  snake2.Update();
+  snake2.Update(2);
   int new_x2 = static_cast<int>(snake2.head_x2);
   int new_y2 = static_cast<int>(snake2.head_y2);
  if (food.x == new_x2 && food.y == new_y2) {
@@ -112,3 +104,8 @@ void Game::Update() {
 int Game::GetScore() const { return score2; }
 //int Game::GetSize() const { return snake.size; }
 int Game::GetSize() const {return snake2.size; }
+//std::ofstream filestream;
+    //filestream.open("/home/workspace/score.txt"); //lava
+    //filestream << "player -1- :  " << score;         //lava
+    //filestream.close();                           //lava
+    //PlaceFood();

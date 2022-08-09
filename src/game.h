@@ -19,6 +19,7 @@ class Game {
 
   Snake snake;
   Snake snake2;
+
   SDL_Point food;
 
   std::random_device dev;

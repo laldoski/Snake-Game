@@ -2,24 +2,37 @@
 #include <cmath>
 #include <iostream>
 
-void Snake::Update() {
+void Snake::Update(int player) {
+  if (player == 1){
   SDL_Point prev_cell{static_cast<int>(head_x),static_cast<int>(head_y)};  // We first capture the head's cell before updating.
-  SDL_Point prev_cell2{static_cast<int>(head_x2),static_cast<int>(head_y2)};
-  //std::cout <<"head_y :"<< head_x2 <<std::endl;
+  
+    
   UpdateHead();
   // Capture the head's cell after updating.
   SDL_Point current_cell{static_cast<int>(head_x),static_cast<int>(head_y)};  
-  //std::cout <<"current_cell2: "<< current_cell.x <<std::endl;
-  SDL_Point current_cell2 {static_cast<int>(head_x2),static_cast<int>(head_y2)};
   // Update all of the body vector items if the snake head has moved to a new
   // cell.
   if (current_cell.x != prev_cell.x || current_cell.y != prev_cell.y) {
     UpdateBody(current_cell, prev_cell);}
+  }
+ else if (player == 2)
+{
+  //SDL_Point prev_cell{static_cast<int>(head_x),static_cast<int>(head_y)};  // We first capture the head's cell before updating.
+  SDL_Point prev_cell2{static_cast<int>(head_x2),static_cast<int>(head_y2)};
+  UpdateHead();
+  // Capture the head's cell after updating. 
+ SDL_Point current_cell2 {static_cast<int>(head_x2),static_cast<int>(head_y2)};
+  // Update all of the body vector items if the snake head has moved to a new
+  // cell.
   if (current_cell2.x != prev_cell2.x || current_cell2.y != prev_cell2.y){
     UpdateBody(current_cell2,prev_cell2);}
   }
-  
 
+}
+
+
+  
+  
 
 void Snake::UpdateHead() {
   switch (direction) {
@@ -50,6 +63,7 @@ void Snake::UpdateHead() {
 
     case Direction::kL:
       head_x2 -= speed;
+      
       break;
 
     case Direction::kR:
