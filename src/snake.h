@@ -38,10 +38,10 @@ class Snake {
  
   
   std::vector<SDL_Point> body;
-
+  std::vector<SDL_Point> body2; //snake2 vector body
  private:
   void UpdateHead();
-  void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
+  void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell, int snakePlayer);
 
   bool growing{false};
   int grid_width;
