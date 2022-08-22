@@ -2,6 +2,7 @@
 #include "controller.h"
 #include "game.h"
 #include "renderer.h"
+#include <vector>
 
 int main() {
   constexpr std::size_t kFramesPerSecond{60};
@@ -17,7 +18,10 @@ int main() {
   
   game.Run(controller, renderer, kMsPerFrame);
   std::cout << "Game has terminated successfully!\n";
-  std::cout << "Score Player1: " << game.GetScore() << "\n";
-  std::cout << "Size: " << game.GetSize() << "\n";
+//  game.GetScore1();
+  //game.GetScore2();
+ std::cout << "Score Player1: " << game.GetScore1() << "\n";
+ std::cout << "Score Player2: " << game.GetScore2() <<"\n";
+ // std::cout << "Size: " << game.GetSize() << "\n";
   return 0;
 }

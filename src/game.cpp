@@ -2,8 +2,10 @@
 #include <fstream>
 #include <ostream>
 #include <iostream>
+#include <sstream>
 #include <thread>
 #include <future>
+#include <vector>
 #include "SDL.h"
 using namespace std;
 
@@ -12,7 +14,7 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)){
-       
+     
   PlaceFood();
 }
 
@@ -42,7 +44,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 1000) {
-      renderer.UpdateWindowTitle(score,score2, frame_count);
+      renderer.UpdateWindowTitle(score1,score2, frame_count);
       frame_count = 0;
       title_timestamp = frame_end;
     }
@@ -77,35 +79,78 @@ void Game::Update() {
   if ((!snake.alive) || (!snake2.alive)) 
   return;
   
-
   snake.Update(1);
   int new_x = static_cast<int>(snake.head_x);
   int new_y = static_cast<int>(snake.head_y);
   
   // Check if there's food over here
   if (food.x == new_x && food.y == new_y) {
-    score++;
+    score1++;
     // Grow snake and increase speed.
     snake.GrowBody();
     snake.speed += 0.02;
   }
-
   snake2.Update(2);
   int new_x2 = static_cast<int>(snake2.head_x2);
   int new_y2 = static_cast<int>(snake2.head_y2);
  if (food.x == new_x2 && food.y == new_y2) {
     score2++;
-    snake2.GrowBody();
-    snake2.speed += 0.02;
+    snake2.GrowBody2();
+    snake2.speed += 0.02;    
   }
+std::ofstream filestream;
+    filestream.open("/home/workspace/CppND-Capstone-Snake-Game/score.txt", std::ofstream ::out | std::ofstream ::trunc); //lava
+    filestream << "first " <<  score1;     
+    filestream << std::endl;
+    filestream << "second " << score2;
+    filestream.close();  
 }
 
-//int Game::GetScore() const { return score; }
-int Game::GetScore() const { return score2; }
-//int Game::GetSize() const { return snake.size; }
-int Game::GetSize() const {return snake2.size; }
-//std::ofstream filestream;
-    //filestream.open("/home/workspace/score.txt"); //lava
-    //filestream << "player -1- :  " << score;         //lava
-    //filestream.close();                           //lava
-    //PlaceFood();
+ int Game::GetScore1() const { 
+  string line;
+   string scoreString;
+   string playerNum;
+   int Score1=0;
+   string player= "first";
+   std::ifstream filestream("/home/workspace/CppND-Capstone-Snake-Game/score.txt"); 
+  if (filestream.is_open())
+   {
+     while (std::getline(filestream, line))
+     {
+       std::istringstream linestream(line);
+       linestream >> playerNum >> scoreString;
+       if (playerNum.compare(player) == 0)
+       { 
+         Score1 = stoi(scoreString);
+         return Score1;
+       }
+     }
+ } 
+ }
+
+ int Game::GetScore2() const
+ {
+   string line;
+   string scoreString;
+   string playerNum;
+   string player = "second";
+   int Score2 = 0;
+   std::ifstream filestream("/home/workspace/CppND-Capstone-Snake-Game/score.txt");
+   if (filestream.is_open())
+   {
+     while (std::getline(filestream, line))
+     {
+       std::istringstream linestream(line);
+       linestream >> playerNum >> scoreString;
+
+       if (playerNum.compare(player) == 0)
+       {
+         Score2 = stoi(scoreString);
+         return Score2;
+       }
+     }
+   }
+ }
+
+int Game::GetSize1() const { return snake.size1; }
+int Game::GetSize2() const { return snake2.size2; }

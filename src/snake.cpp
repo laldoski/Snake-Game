@@ -93,7 +93,7 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell, 
     else
     {
       growing = false;
-      size++;
+      size1++;
     }
     // Check if the snake has died.
     for (auto const &item : body)
@@ -117,7 +117,7 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell, 
     else
     {
       growing = false;
-      size++;
+      size2++;
     }
     // Check if the snake has died.
     for (auto const &item : body2)
@@ -131,16 +131,22 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell, 
 }
 
 void Snake::GrowBody() { growing = true; }
-
+void Snake::GrowBody2() { growing2 = true; }
 // Inefficient method to check if cell is occupied by snake.
 bool Snake::SnakeCell(int x, int y) {
-  if (x == static_cast<int>(head_x) || y == static_cast<int>(head_y)  && y == static_cast<int>(head_y) || x == static_cast<int>(head_x2) && y == static_cast<int>(head_y2)) {
+  if (x == static_cast<int>(head_x) && y == static_cast<int>(head_y) || x == static_cast<int>(head_x2) && y == static_cast<int>(head_y2)) {
     return true;
   }
+  
   for (auto const &item : body) {
-    if (x == item.x && y == item.y) {
+    if (x == item.x && y == item.y) 
       return true;
-    }
+  }
+ 
+  for (auto const &item : body2) {
+    if (x == item.x && y == item.y) 
+      return true;
+    
   }
   return false;
 }
