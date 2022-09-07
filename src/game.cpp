@@ -6,12 +6,13 @@
 #include <thread>
 #include <future>
 #include <vector>
+#include <thread>
 #include "SDL.h"
 using namespace std;
 
 Game::Game(std::size_t grid_width, std::size_t grid_height)
-      : snake(grid_width,grid_height,1), snake2(grid_width,grid_height,2),
-      engine(dev()),
+      : snake(grid_width,grid_height,1), snake2 (grid_width, grid_height, 2),
+     engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)){
      
@@ -31,7 +32,12 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-   controller.HandleInput(running, snake, snake2);
+  
+  //std::thread player1(controller.HandleInput1, running, snake);
+
+   controller.HandleInput1(running,snake, snake2);
+  // controller.HandleInput2(running,snake2);
+   //controller.HandleInput1(running,snake);
     Update();
    renderer.Render(snake, snake2, food);
    
@@ -55,7 +61,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     if (frame_duration < target_frame_duration) {
       SDL_Delay(target_frame_duration - frame_duration);
     }
-   
+ //  player1.join();
   }
 }
 
@@ -77,33 +83,40 @@ void Game::PlaceFood() {
 
 void Game::Update() {
   if ((!snake.alive) || (!snake2.alive)) 
-  return;
+return;
   
-  snake.Update(1);
+ snake.Update();
+  
   int new_x = static_cast<int>(snake.head_x);
   int new_y = static_cast<int>(snake.head_y);
-  
+ 
   // Check if there's food over here
   if (food.x == new_x && food.y == new_y) {
     score1++;
     // Grow snake and increase speed.
     snake.GrowBody();
     snake.speed += 0.02;
+    PlaceFood();
   }
-  snake2.Update(2);
-  int new_x2 = static_cast<int>(snake2.head_x2);
-  int new_y2 = static_cast<int>(snake2.head_y2);
+  snake2.Update();
+
+  int new_x2 = static_cast<int>(snake2.head_x);
+  int new_y2 = static_cast<int>(snake2.head_y);
+  
+
  if (food.x == new_x2 && food.y == new_y2) {
     score2++;
-    snake2.GrowBody2();
-    snake2.speed += 0.02;    
+    snake2.GrowBody();
+    snake2.speed += 0.02; 
+    PlaceFood(); 
   }
+  
 std::ofstream filestream;
     filestream.open("/home/workspace/CppND-Capstone-Snake-Game/score.txt", std::ofstream ::out | std::ofstream ::trunc); //lava
     filestream << "first " <<  score1;     
     filestream << std::endl;
     filestream << "second " << score2;
-    filestream.close();  
+    filestream.close();   
 }
 
  int Game::GetScore1() const { 
@@ -152,5 +165,5 @@ std::ofstream filestream;
    }
  }
 
-int Game::GetSize1() const { return snake.size1; }
-int Game::GetSize2() const { return snake2.size2; }
+int Game::GetSize1() const { return snake.size; }
+int Game::GetSize2() const { return snake2.size; }
