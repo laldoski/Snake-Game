@@ -7,6 +7,9 @@
 #include "controller.h"
 #include "renderer.h"
 #include "snake.h"
+#include <mutex>
+#include <future>
+#include <fstream>
 
 class Game {
  public:
@@ -22,6 +25,8 @@ class Game {
   Snake snake;
   Snake snake2;
 
+  std::ofstream filestream;
+  
   SDL_Point food;
 
   std::random_device dev;
@@ -30,8 +35,9 @@ class Game {
   std::uniform_int_distribution<int> random_h;
 
   int score1 = 0;
-  int score2 =0;
- 
+  int score2 = 0;
+  std::mutex  mtx;
+  void UpdateSnake(std::promise <bool> &snakePromise, Snake &snake);
   void PlaceFood();
   void Update();
 };

@@ -7,6 +7,7 @@
 #include <future>
 #include <vector>
 #include <thread>
+#include <mutex>
 #include "SDL.h"
 using namespace std;
 
@@ -15,7 +16,7 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
      engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)){
-     
+  filestream.open("score.txt", std::ofstream ::out | std::ofstream ::trunc);  
   PlaceFood();
 }
 
@@ -33,11 +34,9 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // Input, Update, Render - the main game loop.
   
-  //std::thread player1(controller.HandleInput1, running, snake);
 
    controller.HandleInput1(running,snake, snake2);
-  // controller.HandleInput2(running,snake2);
-   //controller.HandleInput1(running,snake);
+  
     Update();
    renderer.Render(snake, snake2, food);
    
@@ -84,40 +83,47 @@ void Game::PlaceFood() {
 void Game::Update() {
   if ((!snake.alive) || (!snake2.alive)) 
 return;
+  std::promise<bool> snake1Promise;
+  std::future<bool> snake1Future = snake1Promise.get_future();
   
- snake.Update();
+  std::thread snake1Thread(&Game::UpdateSnake, this, std::ref(snake1Promise), std::ref(snake));
   
+  std::promise<bool> snake2Promise;
+  std::future<bool> snake2Future = snake2Promise.get_future();
+  
+  std::thread snake2Thread(&Game::UpdateSnake, this, std::ref(snake2Promise), std::ref(snake2));
+
+ if (snake1Future.get() == true)
+ score1++;
+if (snake2Future.get() == true)
+ score2++;
+
+
+    filestream << "first " <<  score1;     
+    filestream << std::endl;
+    filestream << "second " << score2;
+  snake1Thread.join();
+  snake2Thread.join();
+}
+
+void Game::UpdateSnake(std::promise <bool> &snakePromise, Snake &snake){
+  snake.Update();
   int new_x = static_cast<int>(snake.head_x);
   int new_y = static_cast<int>(snake.head_y);
- 
+  std::scoped_lock snakeMtx(mtx);
   // Check if there's food over here
   if (food.x == new_x && food.y == new_y) {
-    score1++;
+   snakePromise.set_value(true);
+   // score1++;
     // Grow snake and increase speed.
+    
     snake.GrowBody();
     snake.speed += 0.02;
     PlaceFood();
   }
-  snake2.Update();
+  else snakePromise.set_value(false);
 
-  int new_x2 = static_cast<int>(snake2.head_x);
-  int new_y2 = static_cast<int>(snake2.head_y);
-  
-
- if (food.x == new_x2 && food.y == new_y2) {
-    score2++;
-    snake2.GrowBody();
-    snake2.speed += 0.02; 
-    PlaceFood(); 
-  }
-  
-std::ofstream filestream;
-    filestream.open("/home/workspace/CppND-Capstone-Snake-Game/score.txt", std::ofstream ::out | std::ofstream ::trunc); //lava
-    filestream << "first " <<  score1;     
-    filestream << std::endl;
-    filestream << "second " << score2;
-    filestream.close();   
-}
+};
 
  int Game::GetScore1() const { 
   string line;
