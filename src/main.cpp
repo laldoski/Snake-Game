@@ -18,10 +18,13 @@ int main() {
   
   game.Run(controller, renderer, kMsPerFrame);
   std::cout << "Game has terminated successfully!\n";
-//  game.GetScore1();
-  //game.GetScore2();
+
  std::cout << "Score Player1: " << game.GetScore1() << "\n";
  std::cout << "Score Player2: " << game.GetScore2() <<"\n";
- // std::cout << "Size: " << game.GetSize() << "\n";
+ //announce the winner
+  if (game.GetScore1() > game.GetScore2())
+   {std::cout << "Player1 is The WINNER!!!"<< "\n";}
+  else if(game.GetScore2() > game.GetScore1())
+   {std::cout << "Player2 is The WINNER!!!"<< "\n";}
   return 0;
 }
